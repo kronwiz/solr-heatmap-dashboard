@@ -1,0 +1,78 @@
+<html>
+	<head>
+		<title>Heatmap</title>
+		<link rel="stylesheet" type="text/css" href="./heatmap.css">
+		<script type="text/javascript" src="./jquery-3.0.0.min.js"></script>
+		<script type="text/javascript" src="./heatmap.js"></script>
+	</head>
+	<body>
+		<table width="100%">
+			<tr>
+				<!-- left -->
+				<td style="border-right: 1px solid black;">
+					<!-- <textarea id="datadump" style="width: 500; height: 200;"></textarea> -->
+					<p>q<br/><input id="query" type="text" value="*:*"/></p>
+					<p><input id="disterrpct-flag" type="checkbox"/>distErrPct (0,0 fully precise - 0,5)<br/><input id="disterrpct" type="number" value="0.15"/></p>
+					<p><input id="disterr-flag" type="checkbox"/>distErr<br/><input id="disterr" type="number" value="0.001"/></p>
+					<p><input id="gridlevel-flag" type="checkbox"/>gridLevel<br/><input id="gridlevel" type="number" value="2"/></p>
+					<p><input id="geom-flag" type="checkbox"/>geom<br/><input id="geom" type="text" value='["-180 -90" TO "180 90"]'/></p>
+					<p>Zoom<br/><input id="zoom" type="number" value="10"/></p>
+					<p>Colors&nbsp;<select id="colors">
+						<option value="16">16</option>
+						<option value="32">32</option>
+						<option value="64" selected>64</option>
+						<option value="128">128</option>
+						<option value="256">256</option>
+						<option value="512">512</option>
+					</select></p>
+					<p><button onclick="javascript:load_heatmap()">Load heatmap</button></p>
+
+					<!-- Computed values -->
+					<table style="border: 1px solid black; margin-top: 30px;">
+						<tr>
+							<th colspan="2" style="border-bottom: 1px solid black;">Computed values</th>
+						</tr>
+						<tr>
+							<td>gridLevel</td><td id="gridlevel-value"></td>
+						</tr>
+						<tr>
+							<td>columns</td><td id="columns-value"></td>
+						</tr>
+						<tr>
+							<td>rows</td><td id="rows-value"></td>
+						</tr>
+						<tr>
+							<td>minX</td><td id="minx-value"></td>
+						</tr>
+						<tr>
+							<td>minY</td><td id="miny-value"></td>
+						</tr>
+						<tr>
+							<td>maxX</td><td id="maxx-value"></td>
+						</tr>
+						<tr>
+							<td>maxY</td><td id="maxy-value"></td>
+						</tr>
+						<tr>
+							<td>max value</td><td id="max-cell-value"></td>
+						</tr>
+						<tr>
+							<td>min value</td><td id="min-cell-value"></td>
+						</tr>
+					</table>
+				</td>
+
+				<!-- right -->
+				<td width="100%">
+					<div id="errormsg"></div>
+					<canvas id="heatmap" width="200" height="200"></canvas> 
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" style="border-top: 1px solid black;">Documentation: <a href="https://cwiki.apache.org/confluence/display/solr/Spatial+Search" target="_blank">Solr Spatial Search</a>, <a href="https://github.com/locationtech/spatial4j" target="_blank">Spatial4j</a>, <a href="http://tsusiatsoftware.net/jts/main.html" target="_blank">JTS Topology Suite</a></td>
+			</tr>
+		</table>
+	</body>
+</html>
+

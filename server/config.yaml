@@ -1,0 +1,6 @@
+server:
+  port: 8888
+  index: heatmap.html
+
+solr:
+  base_url: "http://localhost:8983/solr/airports/select?facet.heatmap=location_rpt"
