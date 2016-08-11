@@ -50,6 +50,6 @@ There's no classification algorithm behind color assignment: the cell value is m
 
 ## LICENSE
 
-This software is under the GNU GENERAL PUBLIC LICENSE Version 3. For more information about using/distributing the library see [http://www.gnu.org/licenses/gpl.html](http://www.gnu.org/licenses/gpl.html).
+This software is under the GNU GENERAL PUBLIC LICENSE Version 3. For more information about using/distributing the software see [http://www.gnu.org/licenses/gpl.html](http://www.gnu.org/licenses/gpl.html).
 
 THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
