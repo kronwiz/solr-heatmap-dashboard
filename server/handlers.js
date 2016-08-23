@@ -42,7 +42,7 @@ function solr_query ( request, response, parsed_url ) {
 	var query = config.solr.base_url + fixed_params + url.parse ( request.url, false ).query;
 
 	http.get ( query, ( res ) => {
-		res.on ( "data", ( chunk ) => {
+		res.on ( "data", function ( chunk ) {
 			body += chunk;
 		} );
 
@@ -51,7 +51,7 @@ function solr_query ( request, response, parsed_url ) {
 			response.end ();
 		} );
 
-	} ).on ( "error", ( e ) => {
+	} ).on ( "error", function ( e ) {
 		console.log ( "ERROR: " + e.message );
 	} );
 }
