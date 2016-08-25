@@ -19,17 +19,17 @@ function get_heatmap ( request, response, parsed_url ) {
 
 	var query = "http://localhost:8983/solr/airports/select?facet.heatmap=location_rpt&facet=true&indent=on&q=*:*&wt=json&" + conds;
 
-	http.get ( query, ( res ) => {
-		res.on ( "data", ( chunk ) => {
+	http.get ( query, function ( res ) {
+		res.on ( "data", function ( chunk ) {
 			body += chunk;
 		} );
 
-		res.on ( "end", () => {
+		res.on ( "end", function () {
 			response.write ( body );
 			response.end ();
 		} );
 
-	} ).on ( "error", ( e ) => {
+	} ).on ( "error", function  ( e ) {
 		console.log ( "ERROR: " + e.message );
 	} );
 }
@@ -41,12 +41,12 @@ function solr_query ( request, response, parsed_url ) {
 
 	var query = config.solr.base_url + fixed_params + url.parse ( request.url, false ).query;
 
-	http.get ( query, ( res ) => {
+	http.get ( query, function ( res ) {
 		res.on ( "data", function ( chunk ) {
 			body += chunk;
 		} );
 
-		res.on ( "end", () => {
+		res.on ( "end", function () {
 			response.write ( body );
 			response.end ();
 		} );
