@@ -5,17 +5,19 @@
 		<script type="text/javascript" src="./jquery-3.0.0.min.js"></script>
 		<script type="text/javascript" src="./heatmap.js"></script>
 	</head>
-	<body>
+	<body onload="javascript:init()">
 		<table width="100%">
 			<tr>
 				<!-- left -->
 				<td style="border-right: 1px solid black;">
 					<!-- <textarea id="datadump" style="width: 500; height: 200;"></textarea> -->
 					<p>q<br/><input id="query" type="text" value="*:*"/></p>
-					<p><input id="disterrpct-flag" type="checkbox"/>distErrPct (0,0 fully precise - 0,5)<br/><input id="disterrpct" type="number" value="0.15"/></p>
+					<p><input id="disterrpct-flag" type="checkbox"/>distErrPct (0,0 precise - 0,5)<br/><input id="disterrpct" type="number" value="0.15"/></p>
 					<p><input id="disterr-flag" type="checkbox"/>distErr<br/><input id="disterr" type="number" value="0.001"/></p>
 					<p><input id="gridlevel-flag" type="checkbox"/>gridLevel<br/><input id="gridlevel" type="number" value="2"/></p>
 					<p><input id="geom-flag" type="checkbox"/>geom<br/><input id="geom" type="text" value='["-180 -90" TO "180 90"]'/></p>
+					<p>fl<br/><input id="fl" type="text" value=''/></p>
+					<hr/>
 					<p>Zoom<br/><input id="zoom" type="number" value="10"/></p>
 					<p>Colors&nbsp;<select id="colors">
 						<option value="16">16</option>

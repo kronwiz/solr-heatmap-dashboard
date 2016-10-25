@@ -1,4 +1,25 @@
 
+hm_data = {};
+
+
+function init () {
+	var canvas = $( "#heatmap" ).get ( 0 );
+	canvas.addEventListener ( "click", canvas_clicked, false );
+
+	hm_data.canvas_left = canvas.offsetLeft;
+	hm_data.canvas_top = canvas.offsetTop;
+
+	$.ajax ( {
+		"url": "/get-config?name=solr.rpt_field"
+
+	} ).done ( function ( data ) {
+		var results = JSON.parse ( data );
+
+		hm_data.rpt_field = results [ "value" ];
+	} )
+}
+
+
 function load_heatmap () {
 	var conds = "";
 	var disterrpct = $( "#disterrpct" ).val ();
@@ -10,17 +31,13 @@ function load_heatmap () {
 	if ( q.trim ().length == 0 ) q = "*:*";
 	conds = "q=" + q;
 
-/*	if ( $( "#disterrpct-flag" ).is ( ":checked" ) ) conds += "disterrpct=" + disterrpct;
-	if ( $( "#gridlevel-flag" ).is ( ":checked" ) ) conds += "&gridlevel=" + gridlevel;
-	if ( $( "#geom-flag" ).is ( ":checked" ) ) conds += "&geom=" + geom; */
-
+	conds += "&facet=true&facet.heatmap=" + hm_data.rpt_field;
 	if ( $( "#disterrpct-flag" ).is ( ":checked" ) ) conds += "&facet.heatmap.distErrPct=" + disterrpct;
 	if ( $( "#disterr-flag" ).is ( ":checked" ) ) conds += "&facet.heatmap.distErr=" + disterr;
 	if ( $( "#gridlevel-flag" ).is ( ":checked" ) ) conds += "&facet.heatmap.gridLevel=" + gridlevel;
-	if ( $( "#geom-flag" ).is ( ":checked" ) ) conds += "&facet.heatmap.geom=" + geom;
+	if ( $( "#geom-flag" ).is ( ":checked" ) ) conds += "&facet.heatmap.geom=" + geom.trim ();
 
 	$.ajax ( {
-		// "url": "/get_heatmap?" + conds
 		"url": "/query?" + conds
 
 	} ).done ( function ( data ) {
@@ -55,14 +72,35 @@ function fill_table ( facet ) {
 	var i = 0;
 	while ( facet [ i ] != "counts_ints2D" ) {
 		if ( facet [ i ] == "gridLevel" ) $( "#gridlevel-value" ).text ( facet [ i + 1 ] );
-		if ( facet [ i ] == "columns" ) $( "#columns-value" ).text ( facet [ i + 1 ] );
-		if ( facet [ i ] == "rows" ) $( "#rows-value" ).text ( facet [ i + 1 ] );
-		if ( facet [ i ] == "minX" ) $( "#minx-value" ).text ( facet [ i + 1 ] );
-		if ( facet [ i ] == "minY" ) $( "#miny-value" ).text ( facet [ i + 1 ] );
-		if ( facet [ i ] == "maxX" ) $( "#maxx-value" ).text ( facet [ i + 1 ] );
-		if ( facet [ i ] == "maxY" ) $( "#maxy-value" ).text ( facet [ i + 1 ] );
+		if ( facet [ i ] == "columns" ) {
+			$( "#columns-value" ).text ( facet [ i + 1 ] );
+			hm_data.columns = parseInt ( facet [ i + 1 ] );
+		}
+		if ( facet [ i ] == "rows" ) {
+			$( "#rows-value" ).text ( facet [ i + 1 ] );
+			hm_data.rows = parseInt ( facet [ i + 1 ] );
+		}
+		if ( facet [ i ] == "minX" ) {
+			$( "#minx-value" ).text ( facet [ i + 1 ] );
+			hm_data.minx = parseFloat ( facet [ i + 1 ] );
+		}
+		if ( facet [ i ] == "minY" ) {
+			$( "#miny-value" ).text ( facet [ i + 1 ] );
+			hm_data.miny = parseFloat ( facet [ i + 1 ] );
+		}
+		if ( facet [ i ] == "maxX" ) {
+			$( "#maxx-value" ).text ( facet [ i + 1 ] );
+			hm_data.maxx = parseFloat ( facet [ i + 1 ] );
+		}
+		if ( facet [ i ] == "maxY" ) {
+			$( "#maxy-value" ).text ( facet [ i + 1 ] );
+			hm_data.maxy = parseFloat ( facet [ i + 1 ] );
+		}
 		i++;
 	}
+
+	hm_data.cell_width = Math.abs ( hm_data.maxx - hm_data.minx ) / hm_data.columns;
+	hm_data.cell_height = Math.abs ( hm_data.maxy - hm_data.miny ) / hm_data.rows;
 }
 
 
@@ -78,6 +116,8 @@ function draw_points ( facet ) {
 	}
 
 	var zoom = parseInt ( $( "#zoom" ).val () );
+	hm_data.zoom = zoom;
+
 	var COLORS = GRADIENTS [ $( "#colors" ).val () ];
 
 	canvas.width = columns * zoom;
@@ -134,6 +174,61 @@ function draw_points ( facet ) {
 	$( "#max-cell-value" ).text ( max_cdata );
 	$( "#min-cell-value" ).text ( min_cdata );
 }
+
+
+function canvas_clicked ( ev ) {
+	var conds = "";
+
+	// event position in cell grid coordinates
+	var col = Math.trunc ( ev.offsetX / hm_data.zoom );
+	var row = Math.trunc ( ev.offsetY / hm_data.zoom );
+
+	// cell boundaries in world coordinates
+	var cminx = hm_data.minx + hm_data.cell_width * col; // it works because col starts from 0
+	var cmaxx = cminx + hm_data.cell_width; // all cells are squares in our representation
+	var cmaxy = hm_data.maxy - hm_data.cell_height * row; // it works because row starts from 0
+	var cminy = cmaxy - hm_data.cell_height; // all cells are squares in our representation
+
+	var q = $( "#query" ).val ();
+	if ( q.trim ().length == 0 ) q = "*:*";
+	conds = "q=" + q;
+
+	var fl = $( "#fl" ).val ();
+	if ( fl.trim ().length != 0 ) conds += "&fl=" + fl;
+
+	// Note the quotes and the order of the coordinates
+	conds += '&fq=' + hm_data.rpt_field + ':[ "' + cminy + ', ' + cminx + '" TO "' + cmaxy + ', ' + cmaxx + '" ]';
+
+	$.ajax ( {
+		"url": "/query?" + conds
+
+	} ).done ( function ( data ) {
+		var results = JSON.parse ( data );
+
+		if ( results [ "error" ] ) {
+			// display error message
+			$( "#errormsg" ).text ( results [ "error" ] [ "msg" ] );
+			return false;
+
+		} else {
+			// clear error message
+			$( "#errormsg" ).text ( "" );
+		};
+
+		var docs = results [ "response" ] [ "docs" ];
+
+		if ( docs.length == 0 ) return;
+
+		var records = [];
+		for ( var i = 0; i < docs.length; i++ ) {
+			records.push ( JSON.stringify ( docs [ i ] ) );
+		}
+
+		alert ( records.join ( "\n" ) + "\n\nCell row: " + row + ", col: " + col + '\nBoudaries: [ "' + cminy + ', ' + cminx + '" TO "' + cmaxy + ', ' + cmaxx + '" ]' );
+	} );
+
+}
+
 
 var GRADIENTS = {
 	"16":

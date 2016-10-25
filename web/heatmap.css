@@ -8,6 +8,13 @@ td {
 	padding: 5px;
 }
 
+hr {
+	border: none;
+	height: 1px;
+	color: black;
+	background-color: black;
+}
+
 #errormsg {
 	background-color: pink;
 }
