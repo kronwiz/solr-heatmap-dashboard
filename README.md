@@ -19,9 +19,10 @@ Open the `config.yaml` file. It looks like this:
       index: heatmap.html
 
     solr:
-      base_url: "http://localhost:8983/solr/airports/select?facet.heatmap=location_rpt"
+      base_url: "http://localhost:8983/solr/airports/select"
+      rpt_field: location_rpt
 
-You have to change the Solr base URL: it must be complete up to the name of the field containing your geographical data (in this example `location_rpt`). It must be an RPT type field.
+You have to change the Solr base URL: it must be complete up to the name of the handler. In the `rpt_field` parameter you should put the name of the field containing your geographical data (in this example `location_rpt`). It must be an RPT type field.
 
 If you like you can also change the port used by the server.
 
@@ -43,6 +44,8 @@ After you change the parameters you have to press on the "Load heatmap" button t
 Solr's parameters are sent only if the corresponding checkbox is selected.
 
 The "Computed values" box is populated after the heatmap has been loaded to show you what Solr returns. It's interesting, for example, to see how the `gridLevel` changes depending on the `distErrPct` or `geom` parameters.
+
+When you click on a cell a query is executed to retrieve, for each record belonging to that cell, the fields specified in the `fl` box: this box should contain a comma separated list of field names; if it's empty all the fields are retrieved. Then an alert is displayed with the data and the boundaries of the cell, that may be useful if you want to copy and paste them in the `geom` box to zoom into the cell.
 
 ### About colors
 
