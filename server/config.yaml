@@ -3,4 +3,5 @@ server:
   index: heatmap.html
 
 solr:
-  base_url: "http://localhost:8983/solr/airports/select?facet.heatmap=location_rpt"
+  base_url: "http://localhost:8983/solr/airports/select"
+  rpt_field: location_rpt

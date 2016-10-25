@@ -4,40 +4,10 @@ var http = require ( "http" );
 
 var config = null;
 
-/*
-function get_heatmap ( request, response, parsed_url ) {
-	var params = parsed_url.query;
-	var body = "";
-	var conds = "";
-
-	var disterrpct = params [ "disterrpct" ];
-	if ( disterrpct ) conds += "facet.heatmap.distErrPct=" + disterrpct;
-	var gridlevel = params [ "gridlevel" ];
-	if ( gridlevel ) conds += "&facet.heatmap.gridLevel=" + gridlevel;
-	var geom = params [ "geom" ];
-	if ( geom ) conds += "&facet.heatmap.geom=" + geom;
-
-	var query = "http://localhost:8983/solr/airports/select?facet.heatmap=location_rpt&facet=true&indent=on&q=*:*&wt=json&" + conds;
-
-	http.get ( query, function ( res ) {
-		res.on ( "data", function ( chunk ) {
-			body += chunk;
-		} );
-
-		res.on ( "end", function () {
-			response.write ( body );
-			response.end ();
-		} );
-
-	} ).on ( "error", function  ( e ) {
-		console.log ( "ERROR: " + e.message );
-	} );
-}
-*/
 
 function solr_query ( request, response, parsed_url ) {
 	var body = "";
-	var fixed_params = "&indent=on&wt=json&facet=true&";
+	var fixed_params = "?indent=on&wt=json&";
 
 	var query = config.solr.base_url + fixed_params + url.parse ( request.url, false ).query;
 
@@ -57,13 +27,35 @@ function solr_query ( request, response, parsed_url ) {
 }
 
 
+function get_recursive_name ( obj, parts ) {
+	var next = obj [ parts [ 0 ] ];
+	if ( ! next ) return undefined;
+	if ( parts.length > 1 )
+		return get_recursive_name ( next, parts.slice ( 1 ) );
+	else
+		return next;
+}
+
+
+function get_config ( request, response, parsed_url ) {
+	var params = parsed_url.query;
+	var value = undefined;
+
+	if ( params [ "name" ] )
+		value = get_recursive_name ( config, params [ "name" ].split ( "." ) );
+
+	response.write ( '{ "name": "' + params [ "name" ] + '", "value": "' + value + '" }' );
+	response.end ();
+}
+
+
 function get_handlers ( cfg ) {
 	// receive configuration from caller
 	config = cfg;
 
 	return {
-		// "/get_heatmap": get_heatmap,
-		"/query": solr_query
+		"/query": solr_query,
+		"/get-config": get_config
 	}
 }
 
